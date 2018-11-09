@@ -15,7 +15,6 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -27,22 +26,54 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 public class Servidorremoto extends Thread {
 
-    public static BufferedImage toBufferedImage(Image img) {
+    public static BufferedImage toBufferedImage(Image img, int tipo) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
-
         // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_BYTE_INDEXED);
 
+        if (tipo == 1) {
+            //Creando uma imagem preto e branco
+            bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_BYTE_GRAY);
+            // Draw the image on to the buffered image
+            Graphics2D bGr = bimage.createGraphics();
+            bGr.drawImage(img, 0, 0, null);
+            bGr.dispose();
+            
+            return bimage;
+        } else if (tipo == 2) {
+            Graphics2D bGr = bimage.createGraphics();
+            bGr.drawImage(img, 0, 0, null);
+            bGr.dispose();
+
+            //Inveter cores
+            int w = bimage.getWidth();
+            int h = bimage.getHeight();
+
+            for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; j++) {
+                    Color pixel = new Color(bimage.getRGB(i, j));
+                    // Aplicamos a fórmula 
+                    Color inverso = new Color(
+                            255 - pixel.getRed(),
+                            255 - pixel.getGreen(),
+                            255 - pixel.getBlue());
+
+                    // Definimos novamente no pixel
+                    bimage.setRGB(i, j, inverso.getRGB());
+                }
+            }
+            
+            return bimage;
+
+        }
         // Draw the image on to the buffered image
         Graphics2D bGr = bimage.createGraphics();
         bGr.drawImage(img, 0, 0, null);
@@ -50,6 +81,7 @@ public class Servidorremoto extends Thread {
 
         // Return the buffered image
         return bimage;
+
     }
 
     public static byte[] retornaImagem(BufferedImage originalImage) {
@@ -147,11 +179,12 @@ public class Servidorremoto extends Thread {
                     }else if (comando.contains("imagem")) {
                         int x = entrada.readInt();
                         int y = entrada.readInt();
+                        int tipo = entrada.readInt();
                         System.out.println(x + " " + y);
                         Image img
                                 = robo.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())).
                                         getScaledInstance(x, y, Image.SCALE_FAST);
-                        saida.writeObject(retornaImagem(toBufferedImage(img)));
+                        saida.writeObject(retornaImagem(toBufferedImage(img, tipo)));
                         saida.flush();
                     } else if (comando.contains("mousemove")) {
                         
