@@ -1,0 +1,33 @@
+{
+	"info": {
+		"_postman_id": "055cf6bc-6542-416c-adc3-2fdd5d67a39d",
+		"name": "TesteAPI",
+		"description": "Api Teste da aula de web.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Teste",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tabuada",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
