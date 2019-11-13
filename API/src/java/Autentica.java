@@ -31,7 +31,7 @@ public class Autentica extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-
+/////////////////sfdd
        response.setContentType("text/json;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
